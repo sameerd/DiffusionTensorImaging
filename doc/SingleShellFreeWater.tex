@@ -1,0 +1,45 @@
+\documentclass[12pt]{article}
+\usepackage{hyperref}
+\title{Single Shell Free Water Elimination Model}
+\author{
+  Sameer DCosta \\
+    sameerdcosta@gmail.com
+}
+\date{\today}
+
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+This document details out an implementation of a Free Water Elimination model
+for Diffusion Tensor MRI. We are mainly following the implementation in [1]
+(Pasternak et al. 2009) with a few simplifications suggested in [2] (Pasternak
+et al. 2012). The code is similar to the Matlab procedure for the Beltrami flow
+given in [3] (Kimmel Numerical Geometry of Images, Figure 10.2)
+
+\section{Background}
+$$ e^{i * \pi} + 1 = 0$$
+
+\begin{thebibliography}{9}
+\bibitem{Pasternak2009}
+Pasternak, O. , Sochen, N. , Gur, Y. , Intrator, N. and Assaf, Y. (2009), Free
+water elimination and mapping from diffusion MRI. Magn. Reson. Med., 62:
+717-730. \href{https://doi.org/10.1002/mrm.22055}{doi:10.1002/mrm.22055}
+
+\bibitem{Pasternak2014}
+Pasternak O., Maier-Hein K., Baumgartner C., Shenton M.E., Rathi Y., Westin CF.
+(2014) The Estimation of Free-Water Corrected Diffusion Tensors. In: Westin
+CF., Vilanova A., Burgeth B. (eds) Visualization and Processing of Tensors and
+Higher Order Descriptors for Multi-Valued Data. Mathematics and Visualization.
+Springer, Berlin, Heidelberg \href{https://doi.org/10.1007/978-3-642-54301-2\_11}{doi:10.1007/978-3-642-54301-2\_11}
+
+\bibitem{Kimmel}
+Kimmel, Ron. "Geometric Framework in Image Processing." Numerical Geometry of
+Images: Theory, Algorithms, and Applications. N.p.: Springer, 2012. N. pag.
+Print. \href{https://doi.org/10.1007/978-0-387-21637-9}{doi:10.1007/978-0-387-21637-9}
+
+\end{thebibliography}
+
+
+\end{document}
