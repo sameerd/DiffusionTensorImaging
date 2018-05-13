@@ -1,6 +1,11 @@
 \documentclass[12pt]{article}
 \usepackage{hyperref}
-\title{Single Shell Free Water Elimination Model}
+\usepackage{amsmath}
+
+\newcommand{\vect}[1]{\mathbf{#1}}
+
+
+\title{Single Shell Free Water Elimination Model Implemention}
 \author{
   Sameer DCosta \\
     sameerdcosta@gmail.com
@@ -13,31 +18,71 @@
 
 \section{Introduction}
 This document details out an implementation of a Free Water Elimination model
-for Diffusion Tensor MRI. We are mainly following the implementation in [1]
-(Pasternak et al. 2009) with a few simplifications suggested in [2] (Pasternak
-et al. 2012). The code is similar to the Matlab procedure for the Beltrami flow
-given in [3] (Kimmel Numerical Geometry of Images, Figure 10.2)
+for Diffusion Tensor MRI. We are mainly following the implementation in
+\cite{Pasternak2009} with a few simplifications suggested in \cite{Pasternak2014}.
 
-\section{Background}
-$$ e^{i * \pi} + 1 = 0$$
+\section{Bi-tensor Model}
+In this section we summarize the \textbf{Theory} section in
+\cite{Pasternak2009}. 
+
+\ 
+
+\noindent
+For each voxel we have several readings. $\vect{S}_0$ is the signal acquired
+for the zero diffusion weighting from the $\vect{b0}$ image. $\vect{S}_k$ is
+the signal from the diffusion weighted image (DWI) when the gradient
+orientation $\vect{q}_k$ is applied. We calculate the attenuation
+$[\hat{\vect{A}}]_k = \vect{S}_k / \vect{S}_0$. The attenuation values are
+between 0 and 1. 
+
+\ 
+
+\noindent
+For the \textbf{single compartment model} we assume that the attentuation
+$[\hat{\vect{A}}]_k$ all comes from tissue $[\vect{A}_{\text{tissue}}]_k$. For a Diffusion Tensor $\vect{D}$ this gives us 
+$$[\vect{A}_{\text{tissue}}(\vect{D})]_k = \exp(-b
+\vect{q}_k^T\vect{D}\vect{q}_k).$$
+The $b$ value in the equation is above is the b-value of our single shell. The
+gradient $\vect{q}_k$ is a vector of length 3 and $\vect{D}$ is a 3x3 symmetric
+matrix at each voxel. Usually we have a large number of $k$. The minimium
+required is 6 as $\vect{D}$ has 6 parameters that need to be estimated at each
+voxel.  However in practice we have somewhere between 30 and 60. 
+
+\ 
+
+\noindent
+If we had water instead of tissue at a voxel then DTI model (above) simplifies. The matrix $\vect{D}$ becomes a scalar $d$ and we get
+$$[\vect{A}_{\text{water}}]_k = \exp(-bd),$$ where $d = 3 \cdot 10^{-3}$
+$\text{mm}^2/\text{s}$ for water at $37^\circ$C.
+
+
+
+
+\section{Note}
+The definition of $p^i$ and $q^i$ is a generalization of the ones given in the
+discretization of the Beltrami flow given in \cite{Kimmel}.
 
 \begin{thebibliography}{9}
-\bibitem{Pasternak2009}
-Pasternak, O. , Sochen, N. , Gur, Y. , Intrator, N. and Assaf, Y. (2009), Free
-water elimination and mapping from diffusion MRI. Magn. Reson. Med., 62:
-717-730. \href{https://doi.org/10.1002/mrm.22055}{doi:10.1002/mrm.22055}
+        \bibitem[Pasternak2009]{Pasternak2009} Pasternak, O. , Sochen, N. ,
+                Gur, Y. , Intrator, N. and Assaf, Y. (2009), \textit{Free water
+                elimination and mapping from diffusion MRI.} Magn. Reson.
+                Med., 62: 717-730.
+                \href{https://doi.org/10.1002/mrm.22055}{doi:10.1002/mrm.22055}
 
-\bibitem{Pasternak2014}
-Pasternak O., Maier-Hein K., Baumgartner C., Shenton M.E., Rathi Y., Westin CF.
-(2014) The Estimation of Free-Water Corrected Diffusion Tensors. In: Westin
-CF., Vilanova A., Burgeth B. (eds) Visualization and Processing of Tensors and
-Higher Order Descriptors for Multi-Valued Data. Mathematics and Visualization.
-Springer, Berlin, Heidelberg \href{https://doi.org/10.1007/978-3-642-54301-2\_11}{doi:10.1007/978-3-642-54301-2\_11}
+        \bibitem[Pasternak2014]{Pasternak2014} Pasternak O., Maier-Hein K.,
+                Baumgartner C., Shenton M.E., Rathi Y., Westin CF.  (2014)
+                \textit{The Estimation of Free-Water Corrected Diffusion
+                Tensors.} In: Westin CF., Vilanova A., Burgeth B. (eds)
+                Visualization and Processing of Tensors and Higher Order
+                Descriptors for Multi-Valued Data. Mathematics and
+                Visualization.  Springer, Berlin, Heidelberg
+                \href{https://doi.org/10.1007/978-3-642-54301-2\_11}{doi:10.1007/978-3-642-54301-2\_11}
 
-\bibitem{Kimmel}
-Kimmel, Ron. "Geometric Framework in Image Processing." Numerical Geometry of
-Images: Theory, Algorithms, and Applications. N.p.: Springer, 2012. N. pag.
-Print. \href{https://doi.org/10.1007/978-0-387-21637-9}{doi:10.1007/978-0-387-21637-9}
+        \bibitem[Kimmel]{Kimmel} Kimmel, Ron. \textit{Geometric Framework in
+                Image Processing.} Numerical Geometry of Images: Theory,
+                Algorithms, and Applications. N.p.: Springer, 2012. N. pag.
+                Print.
+                \href{https://doi.org/10.1007/978-0-387-21637-9}{doi:10.1007/978-0-387-21637-9}
 
 \end{thebibliography}
 
