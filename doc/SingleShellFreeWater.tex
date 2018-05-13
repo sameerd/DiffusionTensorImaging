@@ -5,9 +5,10 @@
 \newcommand{\vect}[1]{\mathbf{#1}}
 
 
-\title{Single Shell Free Water Elimination Model Implemention}
+\title{Single Shell Free Water Elimination Model Implementation Notes
+}
 \author{
-  Sameer DCosta \\
+  Sameer D'Costa \\
     sameerdcosta@gmail.com
 }
 \date{\today}
@@ -38,29 +39,94 @@ between 0 and 1.
 \ 
 
 \noindent
-For the \textbf{single compartment model} we assume that the attentuation
+For the \textbf{single compartment model} we assume that the attenuation
 $[\hat{\vect{A}}]_k$ all comes from tissue $[\vect{A}_{\text{tissue}}]_k$. For a Diffusion Tensor $\vect{D}$ this gives us 
 $$[\vect{A}_{\text{tissue}}(\vect{D})]_k = \exp(-b
 \vect{q}_k^T\vect{D}\vect{q}_k).$$
 The $b$ value in the equation is above is the b-value of our single shell. The
 gradient $\vect{q}_k$ is a vector of length 3 and $\vect{D}$ is a 3x3 symmetric
-matrix at each voxel. Usually we have a large number of $k$. The minimium
+matrix at each voxel. Usually we have a large number of $k$. The minimum
 required is 6 as $\vect{D}$ has 6 parameters that need to be estimated at each
 voxel.  However in practice we have somewhere between 30 and 60. 
 
 \ 
 
 \noindent
-If we had water instead of tissue at a voxel then DTI model (above) simplifies. The matrix $\vect{D}$ becomes a scalar $d$ and we get
-$$[\vect{A}_{\text{water}}]_k = \exp(-bd),$$ where $d = 3 \cdot 10^{-3}$
-$\text{mm}^2/\text{s}$ for water at $37^\circ$C.
+If we had water instead of tissue at the voxels then the DTI model (above)
+simplifies and we get the same result in all directions. The matrix $\vect{D}$
+becomes a scalar $d$ and we get the same value of attenuation at every voxel.
+$$[\vect{A}_{\text{water}}]_k = \exp(-bd),$$
+where $d = 3 \cdot 10^{-3}$ $\text{mm}^2/\text{s}$ for water at $37^\circ$C. 
+
+\ 
+
+\noindent
+For the \textbf{bi-tensor model} we assume that each voxel has a two
+compartments. One compartment contains tissue and one contains free water. Let
+$f$ be the fraction of the volume that is free water. Then we have 
+$$[\vect{A}_{\text{bi-tensor}}(\vect{D},f)]_k = 
+  (1-f)[\vect{A}_{\text{tissue}}(\vect{D})]_k +
+  f [\vect{A}_{\text{water}}]_k$$
+$f$ is a scalar that needs to be estimated for each voxel. $(0 \leq f < 1)$
+
+\ 
+
+\noindent
+\textit{Note:} This is a departure from the notation in \cite{Pasternak2009}
+which interchanges the values of $f$ and $1-f$. This is done so that we
+maintain compatibility with the
+\href{http://nipy.org/dipy/examples\_built/reconst\_fwdti.html}{multi-shell
+free water elimination implementation} in \href{http://nipy.org/dipy}{DIPY}. 
+
+\ 
+
+\noindent
+To fit the bi-tensor model we would like to estimate the best values of
+$\vect{D}$ and $f$ that fit $$ [\hat{\vect{A}}]_k =
+[\vect{A}_{\text{bi-tensor}}(\vect{D}), f)]_k$$ We need to esimate a scalar
+$f$ and a real symmetric matrix $\vect{D}$ at each voxel. This is solvable if
+$f=0$ everywhere and we are looking at a single compartment model. However, if
+$f$ is a parameter to be estimated at each voxel then there are infinitely many
+viable solutions. Choosing amongst them requires additional constraints. 
+
+\section{Variational Framework}
+
+%FIXME: Add background about framework
+
+$$L(\vect{D}, f) = \int_\Omega \big( ||\vect{A}_{\text{bi-tensor}}(\vect{D}, f)
+- \hat{\vect{A}}|| + \alpha \sqrt{|\gamma(\vect{D})|} \big) d\Omega$$
+
+%FIXME: Add constraints on volume fraction
+
+\section{Induced Metric}
+
+Instead of using the natural Riemannian metric on the spatial-feature space as
+given in \cite{Pasternak2009}, we use the Euclidean metric given in
+\cite{Pasternak2014} 
+
+$$
+h = 
+\begin{pmatrix}
+1 & & & & & & & & \\
+ & 1 & & & & & & & \\
+ & & 1 & & & & & & \\
+ & & & \beta & & & & & \\
+ & & & & \beta & & & & \\
+ & & & & & \beta & & & \\
+ & & & & & & \beta & & \\
+ & & & & & & & \beta & \\
+ & & & & & & & & \beta & 
+\end{pmatrix}
+$$
+for some $\beta > 0$. Also the embedding is given by 
+$$ \vect{x} = [x, y, z, D^{1 1}, D^{2 2}, D^{3 3}, \sqrt{2} D^{1 2}, \sqrt{2}
+D^{2 3}, \sqrt{2} D^{1 3}].$$
 
 
-
-
-\section{Note}
+\textit{Note}
 The definition of $p^i$ and $q^i$ is a generalization of the ones given in the
-discretization of the Beltrami flow given in \cite{Kimmel}.
+discretization of the Beltrami flow given in \cite{Kimmel} (Equations 10.4 and
+10.5).
 
 \begin{thebibliography}{9}
         \bibitem[Pasternak2009]{Pasternak2009} Pasternak, O. , Sochen, N. ,
