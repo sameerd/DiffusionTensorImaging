@@ -4,6 +4,17 @@
 
 \newcommand{\vect}[1]{\mathbf{#1}}
 
+% document specific commands
+\newcommand{\detgam}{|\gamma|}
+\newcommand{\sqdetgam}{\sqrt{|\gamma|}}
+
+\newcommand{\Ahat}{\hat{\vect{A}}}
+\newcommand{\Atissue}{\vect{A}_{\text{tissue}}}
+\newcommand{\Awater}{\vect{A}_{\text{water}}}
+\newcommand{\Abitensor}{\vect{A}_{\text{bi-tensor}}}
+
+\newcommand{\vx}{\vect{x}}
+\newcommand{\pp}[1]{\frac{\partial}{\partial #1}}
 
 \title{Single Shell Free Water Elimination Model Implementation Notes
 }
@@ -40,14 +51,16 @@ between 0 and 1.
 
 \noindent
 For the \textbf{single compartment model} we assume that the attenuation
-$[\hat{\vect{A}}]_k$ all comes from tissue $[\vect{A}_{\text{tissue}}]_k$. For a Diffusion Tensor $\vect{D}$ this gives us 
-$$[\vect{A}_{\text{tissue}}(\vect{D})]_k = \exp(-b
-\vect{q}_k^T\vect{D}\vect{q}_k).$$
+$[\Ahat]_k$ all comes from tissue $[\Atissue]_k$. For a Diffusion Tensor
+$\vect{D}$ this gives us 
+$$[\Atissue(\vect{D})]_k = \exp(-b \vect{q}_k^T\vect{D}\vect{q}_k).$$
 The $b$ value in the equation is above is the b-value of our single shell. The
 gradient $\vect{q}_k$ is a vector of length 3 and $\vect{D}$ is a 3x3 symmetric
-matrix at each voxel. Usually we have a large number of $k$. The minimum
-required is 6 as $\vect{D}$ has 6 parameters that need to be estimated at each
-voxel.  However in practice we have somewhere between 30 and 60. 
+matrix at each voxel. Let's denote by $n$ the number of applied gradients.  The
+minimum $n$ required is 6 as $\vect{D}$ has 6 parameters that need to be
+estimated at each voxel. Usually we have a large number (somewhere between 30
+and 60) 
+
 
 \ 
 
@@ -55,7 +68,7 @@ voxel.  However in practice we have somewhere between 30 and 60.
 If we had water instead of tissue at the voxels then the DTI model (above)
 simplifies and we get the same result in all directions. The matrix $\vect{D}$
 becomes a scalar $d$ and we get the same value of attenuation at every voxel.
-$$[\vect{A}_{\text{water}}]_k = \exp(-bd),$$
+$$[\Awater]_k = \exp(-bd),$$
 where $d = 3 \cdot 10^{-3}$ $\text{mm}^2/\text{s}$ for water at $37^\circ$C. 
 
 \ 
@@ -64,9 +77,9 @@ where $d = 3 \cdot 10^{-3}$ $\text{mm}^2/\text{s}$ for water at $37^\circ$C.
 For the \textbf{bi-tensor model} we assume that each voxel has a two
 compartments. One compartment contains tissue and one contains free water. Let
 $f$ be the fraction of the volume that is free water. Then we have 
-$$[\vect{A}_{\text{bi-tensor}}(\vect{D},f)]_k = 
-  (1-f)[\vect{A}_{\text{tissue}}(\vect{D})]_k +
-  f [\vect{A}_{\text{water}}]_k$$
+$$[\Abitensor(\vect{D},f)]_k = 
+  (1-f)[\Atissue(\vect{D})]_k +
+  f [\Awater]_k$$
 $f$ is a scalar that needs to be estimated for each voxel. $(0 \leq f < 1)$
 
 \ 
@@ -83,7 +96,7 @@ free water elimination implementation} in \href{http://nipy.org/dipy}{DIPY}.
 \noindent
 To fit the bi-tensor model we would like to estimate the best values of
 $\vect{D}$ and $f$ that fit $$ [\hat{\vect{A}}]_k =
-[\vect{A}_{\text{bi-tensor}}(\vect{D}), f)]_k$$ We need to esimate a scalar
+[\vect{A}_{\text{bi-tensor}}(\vect{D}), f)]_k$$ We need to estimate a scalar
 $f$ and a real symmetric matrix $\vect{D}$ at each voxel. This is solvable if
 $f=0$ everywhere and we are looking at a single compartment model. However, if
 $f$ is a parameter to be estimated at each voxel then there are infinitely many
@@ -95,6 +108,7 @@ viable solutions. Choosing amongst them requires additional constraints.
 
 $$L(\vect{D}, f) = \int_\Omega \big( ||\vect{A}_{\text{bi-tensor}}(\vect{D}, f)
 - \hat{\vect{A}}|| + \alpha \sqrt{|\gamma(\vect{D})|} \big) d\Omega$$
+Here $\alpha$ is a parameter to control the regularization
 
 %FIXME: Add constraints on volume fraction
 
@@ -123,10 +137,129 @@ $$ \vect{x} = [x, y, z, D^{1 1}, D^{2 2}, D^{3 3}, \sqrt{2} D^{1 2}, \sqrt{2}
 D^{2 3}, \sqrt{2} D^{1 3}].$$
 
 
-\textit{Note}
-The definition of $p^i$ and $q^i$ is a generalization of the ones given in the
-discretization of the Beltrami flow given in \cite{Kimmel} (Equations 10.4 and
-10.5).
+\ 
+
+\noindent
+We can pull this metric back to get the induced metric. The components of the
+induced metric are given in Einstein's summation notation by $$ \gamma_{\mu
+\nu} = \partial_\mu \vect{x}^i \partial_\nu \vect{x}^j h_{ij}(\vect{x}).$$ The
+indices $\mu$ and $\nu$ take values 1, 2 or 3 which correspond to the $x$, $y$,
+and $z$ directions. The co-ordinates of the spatial-feature space are denoted
+by $\vect{x}^i$ and the indices $i$ and $j$ take values 1 to 9.  Since $h$ is
+diagonal $h_{i j}$ is only non-zero when $i = j$. So the double sum over $i$
+and $j$ become a single sum over either one of the indices.  Expanding this out
+we get 
+$$\gamma_{\mu \nu} = 
+\sum_{i=1}^3 \partial_\mu \vect{x}^i \partial_\nu \vect{x}^i + 
+\beta \sum_{i=4}^9 \partial_\mu \vect{x}^i \partial_\nu \vect{x}^i$$
+
+\ 
+
+\noindent
+The $\gamma$ matrix is symmetric so we only need to write out 6 equations. 
+
+\begin{eqnarray*}
+\gamma_{1 1} & = & 1 + \beta \sum_{i=4}^9 
+  \big(\vect{x}^i_x\big)^2 \\
+\gamma_{2 2} &=& 1 + \beta \sum_{i=4}^9 
+  \big(\vect{x}^i_y\big)^2 \\
+\gamma_{3 3} &=& 1 + \beta \sum_{i=4}^9 
+  \big(\vect{x}^i_z\big)^2 \\
+\gamma_{1 2} &=& \beta \sum_{i=4}^9 \vect{x}^i_x  \vect{x}^i_y  \\
+\gamma_{2 3} &=& \beta \sum_{i=4}^9 \vect{x}^i_y \vect{x}^i_z  \\
+\gamma_{1 3} &=& \beta \sum_{i=4}^9 \vect{x}^i_x \vect{x}^i_z  \\
+\end{eqnarray*}
+The subscripts $x$, $y$, $z$ denote partial derivatives w.r.t those co-ordinates.
+We denote the determinant of the matrix $\gamma_{\mu \nu}$ by $|\gamma|$. We
+also denote the inverse of the $\gamma_{\mu \nu}$ matrix by $\gamma^{\mu \nu}$.
+Since the inverse of an invertible matrix is the transpose of the co-factor
+matrix divided by the determinant, these two quantities are related by 
+$$\gamma^{\mu \nu} = \frac{C_{\nu \mu}}{|\gamma|}$$
+The cofactor $C_{\nu \mu}$ is computed by $C_{\nu \mu} = (-1)^{\nu + \mu}
+M_{\nu \mu}$ where $M_{\nu \mu}$, a minor, is the determinant of the sub-matrix
+of $\gamma$ with the $\nu$-th row and $\mu$-th column removed. Since $\gamma$
+is symmetric, its inverse matrix is also symmetric. This means that we do not
+need to take the transpose of the co-factor matrix and can also use the
+identity $$\gamma^{\mu \nu} = \frac{C_{\mu \nu}}{|\gamma|}.$$
+
+\begin{eqnarray*}
+C_{1 1} &=&  (\gamma_{2 2} \gamma_{3 3} - \gamma_{2 3}^2) \\
+C_{2 2} &=&  (\gamma_{1 1} \gamma_{3 3} - \gamma_{1 3}^2) \\
+C_{3 3} &=&  (\gamma_{1 1} \gamma_{2 2} - \gamma_{1 2}^2) \\
+C_{1 2} &=& (-\gamma_{1 2} \gamma_{3 3} + \gamma_{1 3} \gamma_{2 3}) \\
+C_{2 3} &=& (-\gamma_{1 1} \gamma_{2 3} + \gamma_{1 3} \gamma_{1 2}) \\
+C_{1 3} &=&  (\gamma_{1 2} \gamma_{2 3} - \gamma_{1 3} \gamma_{2 2}) 
+\end{eqnarray*}
+We also calculate the determinant as the expansion of the co-factors along the first row. 
+$$|\gamma| = \gamma_{1 1} C_{1 1} + \gamma_{1 2} C_{1 2} + 
+             \gamma_{1 3} C_{1 3}$$
+
+\section{Gradient Descent}
+The equations of motion in \cite{Pasternak2009}[A8] simplify with this new
+choice of metric $h$ as the Christoffel numbers are zero. For the 6 tensor
+elements $j \in {4, 5, \ldots, 9}$, 
+
+$$\Delta\vect{x}^j = b\sum_{k=1}^n (\Ahat - \Abitensor) \Atissue
+\bigg(\vect{q}_k^T\frac{\partial\vect{D}}{\partial\vx^j}\vect{q}_k\bigg) +
+\frac{\alpha}{\sqdetgam} \partial_\mu (\sqdetgam \gamma^{\mu \nu} \partial_\nu 
+\vx^j)
+$$
+where Einstein's summation notation is used in the second term on the right
+hand side. For the fractional volume parameter we have
+
+% FIXME: Since we have switched the values of f and 1-f in this document
+% check to see what the sign needs to be on the equation below
+$$\Delta f = -b \sum_{k=1}^n (\Ahat - \Abitensor)(\Atissue - \Awater)$$
+
+\subsection{Beltrami Operator}
+Here we write out the expression for the Beltrami operator $\Delta_\gamma$
+$$\Delta_\gamma \vx^j = \frac{1}{\sqdetgam} \partial_\mu 
+    (\sqdetgam \gamma^{\mu \nu} \partial_\nu \vx^j)$$
+This expression is in Einstein Summation notation and $\mu$ and $\nu$ go
+from 1 to 3. So we have 9 expressions that we consider 3 at a time. 
+
+\ 
+
+\noindent
+Setting $\mu = 1$ we get three terms by letting $\nu$ go from 1 to 3.
+
+\begin{eqnarray*}
+& &\frac{1}{\sqdetgam} \frac{\partial}{\partial x}
+\big(\sqdetgam \gamma^{11} \vx^j_x + 
+ \sqdetgam \gamma^{12} \vx^j_y +
+ \sqdetgam \gamma^{13} \vx^j_z\big) \\
+&=&\frac{1}{\sqdetgam} \frac{\partial}{\partial x}
+\bigg(\frac{C_{11}}{\sqdetgam} \vx^j_x + 
+      \frac{C_{12}}{\sqdetgam} \vx^j_y +
+      \frac{C_{13}}{\sqdetgam} \vx^j_z \bigg) \\
+&=& \frac{1}{\sqdetgam} \pp{x} \bigg( \frac{p^j}{\sqdetgam} \bigg), 
+      \quad\text{Setting}\quad 
+      p^j = C_{11}\vx^j_x + C_{12}\vx^j_y + C_{13}\vx^j_z\\
+&=& \frac{p^j_x}{\detgam} - \frac{p^j \gamma_x}{2\detgam^2}, 
+      \quad\text{Using the quotient rule.}
+\end{eqnarray*}
+\noindent 
+Setting $\mu = 2$ and $q^j = C_{12}\vx^j_x + C_{22}\vx^j_y + C_{23}\vx^j_z$, we get the next three terms as
+$$ \frac{q^j_x}{\detgam} - \frac{q^j \gamma_x}{2\detgam^2}$$
+\noindent 
+Similarly, setting $\mu = 3$ and $r^j = C_{13}\vx^j_x + C_{23}\vx^j_y + C_{33}\vx^j_z$, we get the next three terms as
+$$ \frac{r^j_x}{\detgam} - \frac{r^j \gamma_x}{2\detgam^2}$$
+
+\noindent \textit{Note}: The definition of $p^j$ and $q^j$ is a generalization
+of the ones given in the discretization of the Beltrami flow given in
+\cite{Kimmel} (Equations 10.4 and 10.5).
+
+\ 
+
+\noindent
+Putting it all together
+$$\Delta_\gamma \vx^j = \frac{1}{\detgam}(p^j_x + q^j_y + r^j_z) - 
+\frac{1}{2\detgam^2}(p^j \gamma_x + q^j \gamma_y + r^j \gamma_z).$$
+
+
+
+
+
 
 \begin{thebibliography}{9}
         \bibitem[Pasternak2009]{Pasternak2009} Pasternak, O. , Sochen, N. ,
