@@ -16,7 +16,7 @@
 \newcommand{\vx}{\vect{x}}
 \newcommand{\pp}[1]{\frac{\partial}{\partial #1}}
 
-\title{Single Shell Free Water Elimination Model Implementation Notes
+\title{Single Shell Free Water Elimination Model Implementation
 }
 \author{
   Sameer D'Costa \\
@@ -30,8 +30,8 @@
 
 \section{Introduction}
 This document details out an implementation of a Free Water Elimination model
-for Diffusion Tensor MRI. We are mainly following the implementation in
-\cite{Pasternak2009} with a few simplifications suggested in \cite{Pasternak2014}.
+for Diffusion Tensor MRI. We are mainly following \cite{Pasternak2009} with a
+few simplifications suggested in \cite{Pasternak2014}.
 
 \section{Bi-tensor Model}
 In this section we summarize the \textbf{Theory} section in
@@ -58,8 +58,7 @@ The $b$ value in the equation is above is the b-value of our single shell. The
 gradient $\vect{q}_k$ is a vector of length 3 and $\vect{D}$ is a 3x3 symmetric
 matrix at each voxel. Let's denote by $n$ the number of applied gradients.  The
 minimum $n$ required is 6 as $\vect{D}$ has 6 parameters that need to be
-estimated at each voxel. Usually we have a large number (somewhere between 30
-and 60) 
+estimated at each voxel. Usually we have a large number (somewhere greater than 30 is customary).
 
 
 \ 
@@ -242,7 +241,7 @@ Setting $\mu = 1$ we get three terms by letting $\nu$ go from 1 to 3.
 Setting $\mu = 2$ and $q^j = C_{12}\vx^j_x + C_{22}\vx^j_y + C_{23}\vx^j_z$, we get the next three terms as
 $$ \frac{q^j_x}{\detgam} - \frac{q^j \gamma_x}{2\detgam^2}$$
 \noindent 
-Similarly, setting $\mu = 3$ and $r^j = C_{13}\vx^j_x + C_{23}\vx^j_y + C_{33}\vx^j_z$, we get the next three terms as
+Similarly, setting $\mu = 3$ and $r^j = C_{13}\vx^j_x + C_{23}\vx^j_y + C_{33}\vx^j_z$, we get the last three terms as
 $$ \frac{r^j_x}{\detgam} - \frac{r^j \gamma_x}{2\detgam^2}$$
 
 \noindent \textit{Note}: The definition of $p^j$ and $q^j$ is a generalization
