@@ -9,9 +9,16 @@
 \newcommand{\sqdetgam}{\sqrt{|\gamma|}}
 
 \newcommand{\Ahat}{\hat{\vect{A}}}
+\newcommand{\Amin}{A_{\text{min}}}
+\newcommand{\Amax}{A_{\text{max}}}
 \newcommand{\Atissue}{\vect{A}_{\text{tissue}}}
+\newcommand{\Stissue}{S_{\text{tissue}}}
 \newcommand{\Awater}{\vect{A}_{\text{water}}}
+\newcommand{\Swater}{S_{\text{water}}}
 \newcommand{\Abitensor}{\vect{A}_{\text{bi-tensor}}}
+% these are scalars (Perhaps we should name them differently
+\newcommand{\Ahattissue}{\hat{A}_{\text{tissue}}}
+\newcommand{\Ahatwater}{\hat{A}_{\text{water}}}
 
 \newcommand{\vx}{\vect{x}}
 \newcommand{\pp}[1]{\frac{\partial}{\partial #1}}
@@ -56,9 +63,10 @@ $\vect{D}$ this gives us
 $$[\Atissue(\vect{D})]_k = \exp(-b \vect{q}_k^T\vect{D}\vect{q}_k).$$
 The $b$ value in the equation is above is the b-value of our single shell. The
 gradient $\vect{q}_k$ is a vector of length 3 and $\vect{D}$ is a 3x3 symmetric
-matrix at each voxel. Let's denote by $n$ the number of applied gradients.  The
-minimum $n$ required is 6 as $\vect{D}$ has 6 parameters that need to be
-estimated at each voxel. Usually we have a large number (somewhere greater than 30 is customary).
+matrix at each voxel. Let's denote by $n$ the number of applied gradients that
+are non-colinear.  The minimum $n$ required is 6 as $\vect{D}$ has 6 parameters
+that need to be estimated at each voxel. Usually we have a large number
+(somewhere greater than 30 is customary).
 
 
 \ 
@@ -77,39 +85,65 @@ For the \textbf{bi-tensor model} we assume that each voxel has a two
 compartments. One compartment contains tissue and one contains free water. Let
 $f$ be the fraction of the volume that is free water. Then we have 
 $$[\Abitensor(\vect{D},f)]_k = 
-  (1-f)[\Atissue(\vect{D})]_k +
-  f [\Awater]_k$$
-$f$ is a scalar that needs to be estimated for each voxel. $(0 \leq f < 1)$
+  (f)[\Atissue(\vect{D})]_k +
+  (1-f) [\Awater]_k$$
+$f$ is the tissue fraction and a scalar that needs to be estimated for each
+voxel. $(0 \leq f < 1)$
 
 \ 
 
 \noindent
-\textit{Note:} This is a departure from the notation in \cite{Pasternak2009}
-which interchanges the values of $f$ and $1-f$. This is done so that we
-maintain compatibility with the
+\textit{Note:} This notaion interchanges the values of $1$ and $1-f$ in the
 \href{http://nipy.org/dipy/examples\_built/reconst\_fwdti.html}{multi-shell
-free water elimination implementation} in \href{http://nipy.org/dipy}{DIPY}. 
+free water elimination implementation} in \href{http://nipy.org/dipy}{DIPY}.
+Here the free water maps are given by the values of $1-f$. 
 
 \ 
 
 \noindent
 To fit the bi-tensor model we would like to estimate the best values of
 $\vect{D}$ and $f$ that fit $$ [\hat{\vect{A}}]_k =
-[\vect{A}_{\text{bi-tensor}}(\vect{D}), f)]_k$$ We need to estimate a scalar
+[\vect{A}_{\text{bi-tensor}}(\vect{D}, f)]_k$$ We need to estimate a scalar
 $f$ and a real symmetric matrix $\vect{D}$ at each voxel. This is solvable if
 $f=0$ everywhere and we are looking at a single compartment model. However, if
 $f$ is a parameter to be estimated at each voxel then there are infinitely many
 viable solutions. Choosing amongst them requires additional constraints. 
 
+\section{Initialization}
+We first pick scalar values $S_{tissue}$ and $S_{water}$ which are typical
+values in the $b0$ image that we see for deep brain tissue and water
+respectively. Then we initialize $f$ using
+$$f = 1 - \frac{\log(S_0 / \Stissue)}{\log(\Swater / \Stissue)} = 
+\frac{\log(S_0) - \log(\Stissue)}{\log(\Swater) - \log(\Stissue)}$$
+
+\noindent
+If $S_0 = \Swater$ then we have $f = 0$ which means that the free water
+component is $1$. If $S_0 = \Stissue$ then we have $f = 1$ and the free water
+component is $0$. 
+
+\ 
+
+\noindent
+We can also put additional constraints on $f$ because we know that 
+$\hat{A}_{tissue}$ is likely to have additional constraints. Lets say
+$$ \Amin \leq \Ahattissue \leq \Amax.$$ Then we get
+$$ \Amin \leq \frac{\hat{A} - \Ahatwater}{f} + \Ahatwater \leq \Amax$$
+This gives us 
+$$\frac{\min{\{\hat{A}\}}-\Ahatwater}{\Amax - \Ahatwater} \leq f \leq
+\frac{\max{\{\hat{A}}\}-\Ahatwater}{\Amin - \Ahatwater}$$
+Note: The equation above in \cite{Pasternak2009} is slightly different.
+
 \section{Variational Framework}
 
 %FIXME: Add background about framework
 
-$$L(\vect{D}, f) = \int_\Omega \big( ||\vect{A}_{\text{bi-tensor}}(\vect{D}, f)
-- \hat{\vect{A}}|| + \alpha \sqrt{|\gamma(\vect{D})|} \big) d\Omega$$
+$$L(\vect{D}, f) = \int_\Omega \bigg( \sum_{k=1}^n
+\left\lVert[\vect{A}_{\text{bi-tensor}}(\vect{D}, f)]_k - 
+[\hat{\vect{A}}]_k \right\rVert
++ \alpha \sqrt{|\gamma(\vect{D})|} \bigg) d\Omega.$$ 
+
 Here $\alpha$ is a parameter to control the regularization
 
-%FIXME: Add constraints on volume fraction
 
 \section{Induced Metric}
 
