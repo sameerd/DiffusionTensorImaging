@@ -1,6 +1,6 @@
 """ Tracer classes to trace values of various arrays during gradient descent"""
-
 from abc import ABC
+import numpy as np
 
 class Tracer(ABC):
     
