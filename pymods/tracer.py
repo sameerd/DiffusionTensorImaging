@@ -58,6 +58,6 @@ class IdxTracer(Tracer):
         def extract_scalar_at_idx(arr_name):
             return(np.asscalar(getattr(fw, arr_name)[self.idx]))
         arr_names = ["loss_fid", "f", "finc", "x4inc", "detg"]
-        x4m = np.asscalar(fw.manifold[...,0][idx])
+        x4m = np.asscalar(fw.manifold[...,0][self.idx])
         self.add_to_list([extract_scalar_at_idx(name) for name in arr_names] + 
                 [x4m])
