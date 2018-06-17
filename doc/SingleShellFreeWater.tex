@@ -261,7 +261,10 @@ We calculate the derivatives of $L_\text{fid}$ for a fixed voxel
         \exp(-b \vqk^T\vD\vqk)  \pp{\vx^j} (-b \vqk^T\vD\vqk)
      \\
 &=& -2 f b\sum_{k=1}^n \left( [\Abi]_k - [\Ahat]_k \right) 
-        [\Atissue]_k \bigg(\vqk \ppfull{\vx^j}{\vD} \vqk \bigg)
+        [\Atissue]_k \bigg(\vqk^T \ppfull{\vx^j}{\vD} \vqk \bigg)
+     \\
+&=& 2 f b\sum_{k=1}^n \left( [\Ahat]_k - [\Abi]_k \right) 
+        [\Atissue]_k \bigg(\vqk^T \ppfull{\vx^j}{\vD} \vqk \bigg)
      \\
  \end{eqnarray*}
 
@@ -281,6 +284,9 @@ Also we need to differentiate w.r.t $f$.
         \pp{f} \big(f[\Atissue]_k + (1-f) \Awater \big)
     \\
 &=& 2 \sum_{k=1}^n \big([\Abi]_k - [\Ahat]_k \big) 
+        \big([\Atissue]_k - \Awater \big)
+    \\
+&=& -2 \sum_{k=1}^n \big([\Ahat]_k - [\Abi]_k \big) 
         \big([\Atissue]_k - \Awater \big)
     \\
 \end{eqnarray*}
