@@ -96,7 +96,10 @@ class FreeWaterGradientDescent:
         self.manifold = self.manifold_init.copy()
         self.f = self.f_init.copy()
         
-        # All the intermediate arrays should be initialized however lets not do it right now
+        # All the intermediate arrays (self.X4x, self.g11 etc) 
+        # should be initialized however lets not do it right now
+
+        # list of tracers to call at various points during execution
         self.tracers = []
         
     def compute_regularization_increments(self):
@@ -125,20 +128,23 @@ class FreeWaterGradientDescent:
         self.X9z = dz_manifold(self.manifold, 5)
         
         self.g11 = np.ones(self.X4x.shape) + self.beta * \
-            (self.X4x*self.X4x + self.X5x*self.X5x + self.X6x*self.X6x + self.X7x*self.X7x + 
-                                       self.X8x*self.X8x + self.X9x*self.X9x)
+            (self.X4x*self.X4x + self.X5x*self.X5x + self.X6x*self.X6x + 
+                    self.X7x*self.X7x + self.X8x*self.X8x + self.X9x*self.X9x)
         self.g22 = np.ones(self.X4y.shape) + self.beta * \
-            (self.X4y*self.X4y + self.X5y*self.X5y + self.X6y*self.X6y + self.X7y*self.X7y + 
-                                       self.X8y*self.X8y + self.X9y*self.X9y)
+            (self.X4y*self.X4y + self.X5y*self.X5y + self.X6y*self.X6y + 
+                    self.X7y*self.X7y + self.X8y*self.X8y + self.X9y*self.X9y)
         self.g33 = np.ones(self.X4z.shape) + self.beta * \
-            (self.X4z*self.X4z + self.X5z*self.X5z + self.X6z*self.X6z + self.X7z*self.X7z + 
-                                       self.X8z*self.X8z + self.X9z*self.X9z)
-        self.g12 = self.beta * (self.X4x*self.X4y + self.X5x*self.X5y + self.X6x*self.X6y + 
-                                self.X7x*self.X7y + self.X8x*self.X8y + self.X9x*self.X9y)
-        self.g23 = self.beta * (self.X4y*self.X4z + self.X5y*self.X5z + self.X6y*self.X6z + 
-                                self.X7y*self.X7z + self.X8y*self.X8z + self.X9y*self.X9z)
-        self.g13 = self.beta * (self.X4x*self.X4z + self.X5x*self.X5z + self.X6x*self.X6z + 
-                                self.X7x*self.X7z + self.X8x*self.X8z + self.X9x*self.X9z)
+            (self.X4z*self.X4z + self.X5z*self.X5z + self.X6z*self.X6z + 
+                    self.X7z*self.X7z + self.X8z*self.X8z + self.X9z*self.X9z)
+        self.g12 = self.beta * (self.X4x*self.X4y + self.X5x*self.X5y + 
+                self.X6x*self.X6y + self.X7x*self.X7y + self.X8x*self.X8y + 
+                self.X9x*self.X9y)
+        self.g23 = self.beta * (self.X4y*self.X4z + self.X5y*self.X5z + 
+                self.X6y*self.X6z + self.X7y*self.X7z + self.X8y*self.X8z + 
+                self.X9y*self.X9z)
+        self.g13 = self.beta * (self.X4x*self.X4z + self.X5x*self.X5z + 
+                self.X6x*self.X6z + self.X7x*self.X7z + self.X8x*self.X8z + 
+                self.X9x*self.X9z)
     
         self.C11 = self.g22*self.g33 - self.g23*self.g23
         self.C22 = self.g11*self.g33 - self.g13*self.g13
@@ -173,39 +179,52 @@ class FreeWaterGradientDescent:
         self.r9 = self.C13*self.X9x + self.C23*self.X9y + self.C33*self.X9z
 
         # Beltrami operator incrementals
-        self.b4inc = (dpx(self.p4 * self.gm05) + dpy(self.q4 * self.gm05) + dpz(self.r4 * self.gm05)) * np.squeeze(self.gm05)
-        self.b5inc = (dpx(self.p5 * self.gm05) + dpy(self.q5 * self.gm05) + dpz(self.r5 * self.gm05)) * np.squeeze(self.gm05)
-        self.b6inc = (dpx(self.p6 * self.gm05) + dpy(self.q6 * self.gm05) + dpz(self.r6 * self.gm05)) * np.squeeze(self.gm05)
-        self.b7inc = (dpx(self.p7 * self.gm05) + dpy(self.q7 * self.gm05) + dpz(self.r7 * self.gm05)) * np.squeeze(self.gm05)
-        self.b8inc = (dpx(self.p8 * self.gm05) + dpy(self.q8 * self.gm05) + dpz(self.r8 * self.gm05)) * np.squeeze(self.gm05)
-        self.b9inc = (dpx(self.p9 * self.gm05) + dpy(self.q9 * self.gm05) + dpz(self.r9 * self.gm05)) * np.squeeze(self.gm05)
+        self.b4inc = (dpx(self.p4 * self.gm05) + dpy(self.q4 * self.gm05) + 
+                dpz(self.r4 * self.gm05)) * np.squeeze(self.gm05)
+        self.b5inc = (dpx(self.p5 * self.gm05) + dpy(self.q5 * self.gm05) + 
+                dpz(self.r5 * self.gm05)) * np.squeeze(self.gm05)
+        self.b6inc = (dpx(self.p6 * self.gm05) + dpy(self.q6 * self.gm05) + 
+                dpz(self.r6 * self.gm05)) * np.squeeze(self.gm05)
+        self.b7inc = (dpx(self.p7 * self.gm05) + dpy(self.q7 * self.gm05) + 
+                dpz(self.r7 * self.gm05)) * np.squeeze(self.gm05)
+        self.b8inc = (dpx(self.p8 * self.gm05) + dpy(self.q8 * self.gm05) + 
+                dpz(self.r8 * self.gm05)) * np.squeeze(self.gm05)
+        self.b9inc = (dpx(self.p9 * self.gm05) + dpy(self.q9 * self.gm05) + 
+                dpz(self.r9 * self.gm05)) * np.squeeze(self.gm05)
 
 
     def compute_fidelity_increments(self):
 
         self.Ahat_tissue_curr = \
-            self.qk[:, 0] * self.qk[:, 0] * self.manifold[..., 0:1] + \
-            self.qk[:, 1] * self.qk[:, 1] * self.manifold[..., 1:2] + \
-            self.qk[:, 2] * self.qk[:, 2] * self.manifold[..., 2:3] + \
-            self.qk[:, 0] * self.qk[:, 1] * self.manifold[..., 3:4] * np.sqrt(2) + \
-            self.qk[:, 1] * self.qk[:, 2] * self.manifold[..., 4:5] * np.sqrt(2) + \
-            self.qk[:, 0] * self.qk[:, 2] * self.manifold[..., 5:6] * np.sqrt(2)
-        # prevent underflow
-        np.clip(self.Ahat_tissue_curr, a_min=1e-7, a_max=None, out=self.Ahat_tissue_curr) 
+          self.qk[:, 0] * self.qk[:, 0] * self.manifold[..., 0:1] + \
+          self.qk[:, 1] * self.qk[:, 1] * self.manifold[..., 1:2] + \
+          self.qk[:, 2] * self.qk[:, 2] * self.manifold[..., 2:3] + \
+          self.qk[:, 0] * self.qk[:, 1] * self.manifold[..., 3:4] * np.sqrt(2)+\
+          self.qk[:, 1] * self.qk[:, 2] * self.manifold[..., 4:5] * np.sqrt(2)+\
+          self.qk[:, 0] * self.qk[:, 2] * self.manifold[..., 5:6] * np.sqrt(2)
+        # prevent underflow # FIXME: set correct underflow constant
+        np.clip(self.Ahat_tissue_curr, a_min=1e-7, a_max=None, 
+                out=self.Ahat_tissue_curr) 
         self.Ahat_tissue_curr = np.exp(-self.b_value * self.Ahat_tissue_curr)
 
-        self.A_bi = self.f * self.Ahat_tissue_curr + (1 - self.f) * self.Awater_scalar
+        self.A_bi = self.f * self.Ahat_tissue_curr + (1 - self.f) * \
+                self.Awater_scalar
 
-        self.fidmat = self.b_value * (self.Ahat[..., ~self.gtab.b0s_mask] - self.A_bi) * self.Ahat_tissue_curr
-        # FIXME: Do we multiply by f or not? f is mostly positive so it might not matter.
+        self.fidmat = self.b_value * (self.Ahat[..., ~self.gtab.b0s_mask] - 
+                self.A_bi) * self.Ahat_tissue_curr
+        # FIXME: Do we multiply by f or not? f is mostly positive so it might
+        # not matter.
         self.fidmat = self.f * self.fidmat
         
-        self.fid4inc = (self.fidmat * (self.qk[:, 0] * self.qk[:, 0])).sum(axis=-1)
-        self.fid5inc = (self.fidmat * (self.qk[:, 1] * self.qk[:, 1])).sum(axis=-1)
-        self.fid6inc = (self.fidmat * (self.qk[:, 2] * self.qk[:, 2])).sum(axis=-1)
-        self.fid7inc = (self.fidmat * (self.qk[:, 0] * self.qk[:, 1])).sum(axis=-1) * np.sqrt(2) # 2 / sqrt(2)
-        self.fid8inc = (self.fidmat * (self.qk[:, 1] * self.qk[:, 2])).sum(axis=-1) * np.sqrt(2)
-        self.fid9inc = (self.fidmat * (self.qk[:, 0] * self.qk[:, 2])).sum(axis=-1) * np.sqrt(2)
+        self.fid4inc = (self.fidmat*(self.qk[:, 0]*self.qk[:, 0])).sum(axis=-1)
+        self.fid5inc = (self.fidmat*(self.qk[:, 1]*self.qk[:, 1])).sum(axis=-1)
+        self.fid6inc = (self.fidmat*(self.qk[:, 2]*self.qk[:, 2])).sum(axis=-1)
+        self.fid7inc = (self.fidmat*(self.qk[:, 0]*self.qk[:, 1])).sum(axis=-1)\
+                * np.sqrt(2) # 2 / sqrt(2) 
+        self.fid8inc = (self.fidmat*(self.qk[:, 1]*self.qk[:, 2])).sum(axis=-1)\
+                * np.sqrt(2)
+        self.fid9inc = (self.fidmat*(self.qk[:, 0]*self.qk[:, 2])).sum(axis=-1)\
+                * np.sqrt(2)
 
     def compute_f_increment(self):
         self.finc = (self.alpha_f) * (-self.b_value) * (
@@ -213,7 +232,8 @@ class FreeWaterGradientDescent:
             (self.Ahat_tissue_curr - self.Awater_scalar)).sum(axis=-1)
 
     def compute_manifold_increments(self):
-        #incrementals are the sum of the fidelity incrementals and the beltrami incrementals
+        #incrementals are the sum of the fidelity incrementals and the beltrami
+        #incrementals
         def compute_one_manifold_increment(fidinc, reginc):
             return(self.alpha_fid * fidinc + self.alpha_reg * reginc)
 
@@ -226,7 +246,8 @@ class FreeWaterGradientDescent:
 
 
     def compute_fidelity_loss(self):
-        self.loss_fid = np.linalg.norm(self.Ahat[..., ~self.gtab.b0s_mask] - self.A_bi, axis=-1)
+        self.loss_fid = np.linalg.norm(self.Ahat[..., ~self.gtab.b0s_mask] - 
+                self.A_bi, axis=-1)
 
     def compute_volume_loss(self):
         self.loss_vol = np.sqrt(self.detg)
@@ -238,7 +259,8 @@ class FreeWaterGradientDescent:
         self.total_loss_vol = np.sum(self.loss_vol)
 
     def compute_total_loss(self):
-        self.loss = self.alpha_fid*self.total_loss_fid + self.alpha_reg*self.total_loss_vol
+        self.loss = self.alpha_fid*self.total_loss_fid + \
+                self.alpha_reg*self.total_loss_vol
 
     def increment_manifold(self):
         self.manifold[...,0] += self.dt * self.x4inc
