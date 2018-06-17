@@ -13,7 +13,7 @@ class Tracer(ABC):
         
     def set_val_names(self, names):
         self.val_names = names
-        
+
     def trace_after_increments_compute(self, fw):
         pass
     
@@ -52,12 +52,13 @@ class IdxTracer(Tracer):
     def __init__(self, idx):
         Tracer.__init__(self)
         self.idx = idx
-        self.set_val_names("loss,f,finc,x4inc,detg,x4m")
+        self.set_val_names("loss_vol,loss_fid,f,finc,x4inc,detg,x4m")
     
     def trace_after_loss_functions(self, fw):
         def extract_scalar_at_idx(arr_name):
             return(np.asscalar(getattr(fw, arr_name)[self.idx]))
-        arr_names = ["loss_fid", "f", "finc", "x4inc", "detg"]
+        arr_names = self.val_names.split(",")[:-1] # remove x4m
+        #x4m is extracted differently
         x4m = np.asscalar(fw.manifold[...,0][self.idx])
         self.add_to_list([extract_scalar_at_idx(name) for name in arr_names] + 
                 [x4m])
