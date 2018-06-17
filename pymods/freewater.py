@@ -194,6 +194,7 @@ class FreeWaterGradientDescent:
 
 
     def compute_fidelity_increments(self):
+        """ This is negative of the partial derivative wrt each variable"""
 
         self.Ahat_tissue_curr = \
           self.qk[:, 0] * self.qk[:, 0] * self.manifold[..., 0:1] + \
@@ -210,7 +211,7 @@ class FreeWaterGradientDescent:
         self.A_bi = self.f * self.Ahat_tissue_curr + (1 - self.f) * \
                 self.Awater_scalar
 
-        self.fidmat = self.b_value * (self.Ahat[..., ~self.gtab.b0s_mask] - 
+        self.fidmat = (-self.b_value) * (self.Ahat[..., ~self.gtab.b0s_mask] - 
                 self.A_bi) * self.Ahat_tissue_curr
         # FIXME: Do we multiply by f or not? f is mostly positive so it might
         # not matter.
@@ -227,7 +228,8 @@ class FreeWaterGradientDescent:
                 * np.sqrt(2)
 
     def compute_f_increment(self):
-        self.finc = (self.alpha_f) * (-self.b_value) * (
+        """ This is negative of the partial derivative wrt f"""
+        self.finc = (self.alpha_f) * (self.b_value) * (
             (self.Ahat[..., ~self.gtab.b0s_mask] - self.A_bi) * 
             (self.Ahat_tissue_curr - self.Awater_scalar)).sum(axis=-1)
 
@@ -276,7 +278,7 @@ class FreeWaterGradientDescent:
 
     def increment_f(self):
         self.f[...,0] +=  self.dt * self.finc
-        self.f = self.f.squeeze()
+        self.f = self.f.squeeze() # we will expand it in constrain_f()
 
     def constrain_f(self):
         # make sure that the f values stay constrained
@@ -313,6 +315,8 @@ class FreeWaterGradientDescent:
         
         self.trace_after_constrain()
         
+
+    # FIXME: clean up trace functions so we aren't repeating code like below
     def init_tracers(self, tracers):
         self.tracers = tracers
         
