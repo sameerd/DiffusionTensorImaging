@@ -204,8 +204,8 @@ class FreeWaterGradientDescent:
           self.qk[:, 1] * self.qk[:, 2] * self.manifold[..., 4:5] * np.sqrt(2)+\
           self.qk[:, 0] * self.qk[:, 2] * self.manifold[..., 5:6] * np.sqrt(2)
         # prevent underflow # FIXME: set correct underflow constant
-        np.clip(self.Ahat_tissue_curr, a_min=1e-7, a_max=None, 
-                out=self.Ahat_tissue_curr) 
+        #np.clip(self.Ahat_tissue_curr, a_min=1e-7, a_max=None, 
+        #        out=self.Ahat_tissue_curr) 
         self.Ahat_tissue_curr = np.exp(-self.b_value * self.Ahat_tissue_curr)
 
         self.A_bi = self.f * self.Ahat_tissue_curr + (1 - self.f) * \
