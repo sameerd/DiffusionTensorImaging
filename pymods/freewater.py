@@ -62,6 +62,18 @@ def create_feature_spatial_manifold(S0, D):
     manifold[...,5] = D[...,0,2] * np.sqrt(2)
     return(manifold)
 
+def convert_manifold_to_lower_tri_order(manifold):
+    """The lower tri ordering is  
+            [Dxx, Dxy, Dyy, Dxz,Dyz, Dzz].
+       The manifold ordering is 
+            [Dxx, Dyy, Dzz, sqrt(2)*Dxy, sqrt(2)*Dyz, sqrt(2)*Dzz].
+    """
+    ret = manifold[..., np.array([0,3,1,5,4,2])]
+    ret[...,1] /= np.sqrt(2) # Dxy
+    ret[...,3] /= np.sqrt(2) # Dxz
+    ret[...,4] /= np.sqrt(2) # Dyz
+    return(ret)
+
 class FreeWaterGradientDescent:
     
     """Class to run the Free Water Gradient Descent Computations"""
@@ -250,6 +262,7 @@ class FreeWaterGradientDescent:
     def compute_fidelity_loss(self):
         self.loss_fid = np.linalg.norm(self.Ahat[..., ~self.gtab.b0s_mask] - 
                 self.A_bi, axis=-1)
+        self.loss_fid *= self.loss_fid
 
     def compute_volume_loss(self):
         self.loss_vol = np.sqrt(self.detg)

@@ -4,21 +4,51 @@ import numpy as np
 
 import matplotlib.pyplot as plt
 
+def functor_extract_scalar_at_idx(idx):
+    def extract_scalar_at_idx(fw, arr_name):
+        return(np.asscalar(getattr(fw, arr_name)[idx]))
+    return(extract_scalar_at_idx)
+
+def extract_scalar(fw, name):
+    return(np.asscalar(getattr(fw, name)))
+
+def functor_extract_scalar_from_manifold_at_idx(man_idx, idx):
+    """Creates a function that will extract an index in the manifold"""
+    def extract_scalar_from_manifold_at_idx(fw, name):
+        return(np.asscalar(fw.manifold[...,man_idx][idx]))
+    return(extract_scalar_from_manifold_at_idx)
+
+
 class Tracer(ABC):
     
     """Abstract class to trace the values in the Free Water Gradient Descent"""
 
     def __init__(self, val_names, split_char=","):
         self.val_list = []
-        self.val_names = None
-        self.set_val_names(val_names, split_char)
+        self.val_names = self.guess_val_names(val_names, split_char)
+        func = self.get_default_extract_func()
+        self.extract_funcd = {name:func for name in self.val_names}
         self.rec = None
+
+    def get_default_extract_func(self):
+        """ Get default extractor funcs. Overridden in derived classes """
+        return(extract_scalar)
+
+    def set_extract_func(self, val_name, func):
+        self.extract_funcd[val_name] = func
         
-    def set_val_names(self, names, split_char=","):
+    def guess_val_names(self, names, split_char=","):
+        """If names is a string them split it on split_char, 
+            else it is a list of strings"""
         val_names = names
         if isinstance(names, str):
             val_names = names.split(split_char)
-        self.val_names = val_names
+        return(val_names)
+
+    def trace(self, location, fw):
+        """Try to call the function named trace + location """
+        func_name = "trace" + location
+        return (getattr(self, func_name)(fw))
 
     def trace_after_increments_compute(self, fw):
         pass
@@ -32,7 +62,9 @@ class Tracer(ABC):
     def trace_after_constrain(self, fw):
         pass
     
-    def add_to_list(self, vals):
+    def add_vals_to_list(self, fw):
+        """ Call all the extractor functions """
+        vals = [self.extract_funcd[name](fw, name) for name in self.val_names]
         self.val_list.append(vals)
     
     def finalize(self, fw):
@@ -69,32 +101,32 @@ class Tracer(ABC):
 class LossTracer(Tracer):
     """Trace the loss values"""
     
-    def __init__(self, val_names="fidelity,beltrami,loss"):
+    def __init__(self, val_names="loss,total_loss_fid,total_loss_vol"):
         Tracer.__init__(self, val_names)
+
+    def get_default_extract_func(self):
+        return(extract_scalar)
         
     def trace_after_loss_functions(self, fw):
-        total_loss_fid = np.asscalar(fw.total_loss_fid)
-        total_loss_vol = np.asscalar(fw.total_loss_vol)
-        loss = np.asscalar(fw.loss)
-        self.add_to_list([total_loss_fid, total_loss_vol, loss])  
-    
+        self.add_vals_to_list(fw)
+
+
 class IdxTracer(Tracer):
     """Trace values at one index"""
         
     def __init__(self, idx, 
             val_names="loss_vol,loss_fid,f,finc,x4inc,detg,x4m"):
-        Tracer.__init__(self, val_names)
         self.idx = idx
+        Tracer.__init__(self, val_names)
+        if "x4m" in self.val_names:
+            self.set_extract_func("x4m", 
+                functor_extract_scalar_from_manifold_at_idx(0, self.idx))
+
+    def get_default_extract_func(self):
+        return(functor_extract_scalar_at_idx(self.idx))
     
     def trace_after_loss_functions(self, fw):
-        def extract_scalar_at_idx(arr_name):
-            return(np.asscalar(getattr(fw, arr_name)[self.idx]))
-        arr_names = self.val_names[:-1] # remove x4m
-        #x4m is extracted differently
-        x4m = np.asscalar(fw.manifold[...,0][self.idx])
-        self.add_to_list(
-            [extract_scalar_at_idx(name) for name in arr_names] + 
-            [x4m])
+        self.add_vals_to_list(fw)
 
     def plot_overlaid(self):
         Tracer.plot_overlaid(self)
