@@ -3,10 +3,10 @@ import matplotlib.pyplot as plt
 def plot_3d_z_indices(vol, idx_list, transpose=True,
                       num_rows=1, num_cols=1, 
                       label_loc_x=5, label_loc_y=5, 
-                      im_origin = "lower"):
+                      im_origin = "lower", figsize=(18,16)):
     """Plot z-index slices of a 3d volume as subplots"""
     vol = vol.squeeze() # if there are extra dimensions then reduce them
-    fig=plt.figure(figsize=(18, 16), dpi= 80, facecolor='w', edgecolor='k')
+    fig=plt.figure(figsize=figsize, dpi= 80, facecolor='w', edgecolor='k')
     fig.subplots_adjust(wspace=0.025, hspace=0.0)
 
     im = None

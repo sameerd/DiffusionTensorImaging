@@ -75,10 +75,10 @@ class Tracer(ABC):
         if self.rec is None:
             raise ValueError("Tracer is not finalized")
 
-    def plot_separate(self):
+    def plot_separate(self, **figargs):
         self.check_if_finalized()
         fig, axes = plt.subplots((len(self.val_names) - 1) // 3 + 1, 
-                3, sharex=True)
+                3, sharex=True, **figargs)
         for i, val in enumerate(self.val_names):
             if len(self.val_names) > 3:
                 ax = axes[i // 3, i % 3]
@@ -89,9 +89,9 @@ class Tracer(ABC):
             ax.plot(self.rec[val])
         plt.tight_layout()
 
-    def plot_overlaid(self):
+    def plot_overlaid(self, **figargs):
         self.check_if_finalized()
-        fig = plt.figure()
+        fig = plt.figure(**figargs)
         ax = fig.gca()
         for val in self.val_names:
             ax.plot(self.rec[val], label=val)
