@@ -19,6 +19,7 @@ def plot_3d_z_indices(vol, idx_list, transpose=True,
             im = plt.imshow(vol[:,:,idx].transpose(), origin=im_origin)
         else:
             im = plt.imshow(vol[:,:,idx], origin=im_origin)
+    #plt.tight_layout()
 
     # now put a color bar on the right
     fig = plt.gcf()

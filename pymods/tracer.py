@@ -84,7 +84,8 @@ class Tracer(ABC):
                 ax = axes[i // 3, i % 3]
             else:
                 ax = axes[i % 3]
-            ax.set_title(val)
+            ax.set_title(val, y=1.05)
+            ax.ticklabel_format(style="plain")
             ax.plot(self.rec[val])
         plt.tight_layout()
 
@@ -109,7 +110,6 @@ class LossTracer(Tracer):
         
     def trace_after_loss_functions(self, fw):
         self.add_vals_to_list(fw)
-
 
 class IdxTracer(Tracer):
     """Trace values at one index"""
