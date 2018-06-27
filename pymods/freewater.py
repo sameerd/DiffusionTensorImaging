@@ -78,8 +78,6 @@ class FreeWaterGradientDescent:
     
     """Class to run the Free Water Gradient Descent Computations"""
     
-    UNDERFLOW_MIN = 1e-20
-    
     def __init__(self, Ahat, manifold, f_init, gtab, b_value, dt, 
                  beta = 10., alpha_reg=1., water_d = 3e-3, 
                  fmin = 0., fmax = 1.):
@@ -296,6 +294,7 @@ class FreeWaterGradientDescent:
     def constrain_f(self):
         # make sure that the f values stay constrained
         np.clip(self.f, a_min=self.fmin, a_max=self.fmax, out=self.f)
+        # FIXME: send values out of max and min into the middle
         self.f = self.f[...,np.newaxis]
 
     def iterate(self):
@@ -304,8 +303,7 @@ class FreeWaterGradientDescent:
         self.compute_fidelity_increments()
         self.compute_manifold_increments()
         self.compute_f_increment()
-        
-        self.trace_after_increments_compute()
+        self.trace("_after_increments_compute")
 
         # loss functions
         self.compute_fidelity_loss()
@@ -313,42 +311,26 @@ class FreeWaterGradientDescent:
         self.compute_total_fidelity_loss()
         self.compute_total_volume_loss()
         self.compute_total_loss()
-
-        self.trace_after_loss_functions()
+        self.trace("_after_loss_functions")
         
         # increment
         self.increment_manifold()
         self.increment_f()
-        
-        self.trace_after_increment()
+        self.trace("_after_increment")
 
         # constrain
         self.constrain_manifold()
         self.constrain_f()
-        
-        self.trace_after_constrain()
+        self.trace("_after_constrain")
         
 
-    # FIXME: clean up trace functions so we aren't repeating code like below
     def init_tracers(self, tracers):
         self.tracers = tracers
-        
-    def trace_after_increments_compute(self):
+
+    def trace(self, location):
         for tracer in self.tracers:
-            tracer.trace_after_increments_compute(self)
-    
-    def trace_after_loss_functions(self):
-        for tracer in self.tracers:
-            tracer.trace_after_loss_functions(self)
-    
-    def trace_after_increment(self):
-        for tracer in self.tracers:
-            tracer.trace_after_increment(self)
-    
-    def trace_after_constrain(self):
-        for tracer in self.tracers:
-            tracer.trace_after_constrain(self)
-            
+            tracer.trace(location, self)
+
     def finalize(self):
         for tracer in self.tracers:
             tracer.finalize(self)
