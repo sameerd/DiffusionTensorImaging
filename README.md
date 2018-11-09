@@ -1,14 +1,16 @@
 # Single Shell Free Water Elimination Diffusion Tensor Model 
 
-This is a python implementation of a Single Shell Free Water elimination model
-the follows the papers listed in the references section below.
+This is a Python implementation of a Single Shell Free Water Elimination Model
+the follows the papers listed in the references section below. _This software is
+untested so please do not use it for anything important without doing your own
+testing._
 
 ## Software requirements
 
-* Python 2.7
-* Dipy 0.14
+* Python 3.6.3
+* Dipy 0.14.0
 
-## Example Usage
+## Getting Started
 
 
 
