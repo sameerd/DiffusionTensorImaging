@@ -2,20 +2,21 @@
 
 This is a Python implementation of a Single Shell Free Water Elimination Model
 the follows the papers listed in the references section below. *This software
-is untested so please do not use it for anything important without doing your
-own testing.* 
+is written for educational purposes only and is untested. Please do not use it
+for anything important without doing your own testing.* 
 
 There is a separate effort by @mvgolub and @RafaelNH to put in an expanded
-single shell model into [Dipy](http://nipy.org/dipy/index.html).  Please follow
-along at the [Dipy Issue Tracker
+single shell model into the [Dipy](http://nipy.org/dipy/index.html)
+respository.  Please follow along at the [Dipy Issue Tracker
 #827](https://github.com/nipy/dipy/issues/827).  When the Dipy version is
-ready, it is likely to be better tested, more user friendly and efficient. 
+ready, it is likely to be better tested, more user friendly, efficient and have
+more features than the software here.
 
 
 ## Software requirements
 
 * Python 3.6.3
-* [Dipy](http://nipy.org/dipy/index.html) 0.14.0
+* [Dipy 0.14.0](http://nipy.org/dipy/index.html)
 
 ## Getting Started
 
