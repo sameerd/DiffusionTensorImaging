@@ -24,9 +24,9 @@ more features than the software here.
 
 ## Documentation
 
-This [README](README.md) file has most of the overview of how to use this
-software. The mathematics behind the implementation is written out in this [linked pdf
-file](./doc/SingleShellFreeWater.pdf)
+* This [README](README.md) file has an overview of how to use this repository. 
+* The mathematics behind the implementation is written out in the [SingleShellFreewater.pdf file](./doc/SingleShellFreeWater.pdf). 
+* The bulk of the implementation is in the [freewater.py file](./pymods/freewater.py). 
 
 
 ## References
