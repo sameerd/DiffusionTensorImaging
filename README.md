@@ -21,8 +21,8 @@ features than the version in this repository.
 
 * `git checkout` this repository
 * Follow one of the two examples
-  * The [example.py](notebooks/example.py) file has an example of how to use this code in a script or pipeline
-  * The [Example.ipynb](notebooks/Example.ipynb) Jupyter Notebook has an overview of how to use this repository
+  * The [example.py](notebooks/example.py) file has an example of how to use this code in a script or pipeline with your own data.
+  * The [Example.ipynb](notebooks/Example.ipynb) Jupyter Notebook has an overview of how to use this repository with publicly available data
 * Check that the first panel in the loss plots converges
 
 ![Loss function](./loss_function.png)
