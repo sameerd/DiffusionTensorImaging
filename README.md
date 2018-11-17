@@ -14,6 +14,8 @@ features than the version in this repository.
 
 ## Software requirements
 
+This code was developed with the following versions. It might also work on slightly older versions of `Python`.
+
 * Python 3.6.3
 * [Dipy 0.14.0](http://nipy.org/dipy/index.html)
 
@@ -21,13 +23,13 @@ features than the version in this repository.
 
 * `git checkout` this repository
 * Follow one of the two examples
-  * The [example.py](example.py) file has an example of how to use this code in a script or pipeline with your own data.
-  * The [Example.ipynb](notebooks/Example.ipynb) Jupyter Notebook has an overview of how to use this repository with publicly available data
+  * [example.py](example.py) : how to use this code in a script or pipeline with your own data.
+  * [Example.ipynb](notebooks/Example.ipynb) Jupyter Notebook has an interactive overview of how to use this repository with publicly available data
 * Check that the first panel in the loss plots converges
 
 ![Loss function](./loss_function.png)
 
-Currently the code has convenience functions to return the `free water map`, the free water corrected `mean diffusivity`, and the free water corrected `Fractional Anisotropy`. 
+Currently the code has convenience functions to return the `free water map`, the free water corrected `mean diffusivity`, and the free water corrected `Fractional Anisotropy` (visualized below).  
 
 ![Free water corrected FA](./fw_fa.png)
 
@@ -36,7 +38,7 @@ Currently the code has convenience functions to return the `free water map`, the
 
 * This [README](README.md) file has an overview of how to use this repository. 
 * The mathematics behind the implementation is written out in the [SingleShellFreewater.pdf](./doc/SingleShellFreeWater.pdf) file. 
-* The core of the implementation is in the [freewater.py](./pymods/freewater.py) file. 
+* The core of the implementation is in the [freewater.py](./pymods/freewater.py) file and the interface class is in the [freewater\_runner.py](./pymods/freewater_runner.py) file. 
 
 ## References
 
