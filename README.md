@@ -19,6 +19,17 @@ features than the version in this repository.
 
 ## Getting Started
 
+* `git checkout` this repository
+* Follow one of the two examples
+  * The [Example.ipynb](notebooks/Example.ipynb) Jupyter Notebook has an overview of how to use this repository
+  * The [example.py](notebooks/example.py) file has an example of how to use this code in a script or pipeline
+* Check for model convergence
+
+![Loss function](./loss_function.png)
+
+Currently the code has conveience functions to return the `free water map`, the free water corrected `mean diffusivity`, and the free water corrected `Fractional Anisotropy`. 
+
+![Free water corrected FA](./fw_fa.png)
 
 
 ## Documentation
