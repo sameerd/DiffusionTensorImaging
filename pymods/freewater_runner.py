@@ -38,10 +38,17 @@ class FreewaterRunner:
     # apparent diffusion coefficient in water
     ADC_WATER = 3 * 1e-3
 
-    
-    def __init__(self, data, gtab):
-        self.data = np.copy(data) # shape (xs, ys, zs, num_gradients)
+
+    def __init__(self, data, gtab, xslice=slice(None, None),
+                 yslice=slice(None, None), zslice=slice(None, None)):
+        # shape of original_data (xs, ys, zs, num_gradients)
+        self.original_data = data # grab a reference to the original data
+        self.data = data[xslice, yslice, zslice, :].astype(np.float_, copy=True)
         self.gtab = gtab
+
+        self.xslice = xslice
+        self.yslice = yslice
+        self.zslice = zslice
         
         self.data_b0 = None # The b0 part of the data
         self.Stissue = None # The likely signal intensity of deep tissue. 
@@ -179,19 +186,29 @@ class FreewaterRunner:
     def plot_loss(self, figsize=(10,4)):
         if self.loss_tracer is not None:
             self.loss_tracer.plot_separate(figsize=(10, 4))
+
+    def _convert_array_to_original_self(self, arr):
+        """ arr is an array of small size (shape = (xslice, yslice, zslice). 
+            Convert it to the original size and return (shape = self.original_data)
+        """
+        ret = np.zeros(self.original_data.shape[:3]) # default dtype is float
+        ret[self.xslice, self.yslice, self.zslice] = np.squeeze(arr)
+        return ret
             
     def get_fw_map(self):
         """ Free water map"""
-        return self.fw
+        return self._convert_array_to_original_self(self.fw)
     
     def get_fw_md(self):
         """ Free water corrected mean diffusivity"""
         if self.evals is not None:
-            return self.evals.mean(axis=-1)
+            return self._convert_array_to_original_self(
+                        self.evals.mean(axis=-1))
         
     def get_fw_fa(self):
         """ Free water corrected fractional anisotropy"""
         if self.evals is not None:
-            return dti.fractional_anisotropy(self.evals)
+            return self._convert_array_to_original_self(
+                        dti.fractional_anisotropy(self.evals))
 
 
