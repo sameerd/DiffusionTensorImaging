@@ -1,8 +1,9 @@
 # Single Shell Free Water Elimination Diffusion Tensor Model 
 
 This is a Python implementation of a Single Shell Free Water Elimination Model
-that follows the papers listed in the references section below. **This software
-is written for educational purposes only.**  
+for analysis of Diffusion Tensor MRI Images. It solves an optimization problem
+over a Riemannian Manifold via gradient descent by following the references
+below. **This software is written for educational purposes only**.
 
 
 | ![Free water corrected FA](./fw_fa.png) |
@@ -26,7 +27,7 @@ This code was developed with the following versions. It might also work on sligh
 
 ![Loss function](./loss_function.png)
 
-If the model isn't convering you can try reducing the time step `dt` or
+If the model isn't converging you can try reducing the time step `dt` or
 increase the number of iterations. Once you are sure about convergence, you can
 use the the code's convenience functions to return the `free water map`, the
 free water corrected `mean diffusivity`, and the free water corrected
@@ -43,7 +44,7 @@ free water corrected `mean diffusivity`, and the free water corrected
 
 * There is a separate effort by @mvgolub and @RafaelNH to put in an expanded
 single shell model into the [Dipy](http://nipy.org/dipy/index.html)
-respository. Please follow along at the [Dipy Issue Tracker
+repository. Please follow along at the [Dipy Issue Tracker
 #827](https://github.com/nipy/dipy/issues/827). When the Dipy version is ready,
 it is likely to be better tested, more user friendly, efficient and have more
 features than the version in this repository.
