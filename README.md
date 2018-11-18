@@ -17,11 +17,15 @@ This code was developed with the following versions. It might also work on sligh
 * Follow one of the two examples
   * [example.py](example.py) : how to use this code in a script or pipeline with your own data.
   * [Example.ipynb](notebooks/Example.ipynb) Jupyter Notebook has an interactive overview of how to use this repository with publicly available data
-* Check that the first panel in the loss plots converges
+* Check that the first panel (marked `loss` below) converges
 
 ![Loss function](./loss_function.png)
 
-Currently the code has convenience functions to return the `free water map`, the free water corrected `mean diffusivity`, and the free water corrected `Fractional Anisotropy` (visualized below).  
+If the model isn't convering you can try reducing the time step `dt` or
+increase the number of iterations. Once you are sure about convergence, you can
+use the the code's convenience functions to return the `free water map`, the
+free water corrected `mean diffusivity`, and the free water corrected
+`Fractional Anisotropy` (visualized below).  
 
 ![Free water corrected FA](./fw_fa.png)
 
