@@ -2,15 +2,7 @@
 
 This is a Python implementation of a Single Shell Free Water Elimination Model
 that follows the papers listed in the references section below. **This software
-is written for educational purposes only and is untested. Please do not use it
-for anything important without doing your own testing.**
-
-There is a separate effort by @mvgolub and @RafaelNH to put in an expanded
-single shell model into the [Dipy](http://nipy.org/dipy/index.html)
-respository. Please follow along at the [Dipy Issue Tracker
-#827](https://github.com/nipy/dipy/issues/827). When the Dipy version is ready,
-it is likely to be better tested, more user friendly, efficient and have more
-features than the version in this repository.
+is written for educational purposes only.**  
 
 ## Software requirements
 
@@ -39,6 +31,25 @@ Currently the code has convenience functions to return the `free water map`, the
 * This [README](README.md) file has an overview of how to use this repository. 
 * The mathematics behind the implementation is written out in the [SingleShellFreewater.pdf](./doc/SingleShellFreeWater.pdf) file. 
 * The core of the implementation is in the [freewater.py](./pymods/freewater.py) file and the interface class is in the [freewater\_runner.py](./pymods/freewater_runner.py) file. 
+
+## Caveats
+* **This software is untested. Please do your own testing before using it.**
+
+* There is a separate effort by @mvgolub and @RafaelNH to put in an expanded
+single shell model into the [Dipy](http://nipy.org/dipy/index.html)
+respository. Please follow along at the [Dipy Issue Tracker
+#827](https://github.com/nipy/dipy/issues/827). When the Dipy version is ready,
+it is likely to be better tested, more user friendly, efficient and have more
+features than the version in this repository.
+
+## Memory Usage
+
+On a recent test a smallish volume of size 100x100x10 with approx 200 gradient
+directions consumes around 3GB of memory and takes approximately 30 minutes to
+run. A more realistically sized volume will take longer and consume more
+memory. Try to make sure that there is enough memory to prevent swapping to
+disk. 
+
 
 ## References
 
