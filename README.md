@@ -5,6 +5,7 @@ that follows the papers listed in the references section below. **This software
 is written for educational purposes only.**  
 
 ![Free water corrected FA](./fw_fa.png)
+*Free Water corrected Fractional Anisotropy*
 
 ## Software requirements
 
