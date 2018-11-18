@@ -4,6 +4,8 @@ This is a Python implementation of a Single Shell Free Water Elimination Model
 that follows the papers listed in the references section below. **This software
 is written for educational purposes only.**  
 
+![Free water corrected FA](./fw_fa.png)
+
 ## Software requirements
 
 This code was developed with the following versions. It might also work on slightly older versions of `Python`.
@@ -25,10 +27,7 @@ If the model isn't convering you can try reducing the time step `dt` or
 increase the number of iterations. Once you are sure about convergence, you can
 use the the code's convenience functions to return the `free water map`, the
 free water corrected `mean diffusivity`, and the free water corrected
-`Fractional Anisotropy` (visualized below).  
-
-![Free water corrected FA](./fw_fa.png)
-
+`Fractional Anisotropy` (visualized above).  
 
 ## Documentation
 
