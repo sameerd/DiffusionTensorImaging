@@ -6,7 +6,7 @@ is written for educational purposes only.**
 
 
 | ![Free water corrected FA](./fw_fa.png) |
-|:--:| 
+|:---:| 
 | *Free Water corrected Fractional Anisotropy* |
 
 ## Software requirements
@@ -35,8 +35,8 @@ free water corrected `mean diffusivity`, and the free water corrected
 ## Documentation
 
 * This [README](README.md) file has an overview of how to use this repository. 
-* The mathematics behind the implementation is written out in the [SingleShellFreewater.pdf](./doc/SingleShellFreeWater.pdf) file. 
-* The core of the implementation is in the [freewater.py](./pymods/freewater.py) file and the interface class is in the [freewater\_runner.py](./pymods/freewater_runner.py) file. 
+* The [SingleShellFreewater.pdf](./doc/SingleShellFreeWater.pdf) file helps describe what the code is doing in the language of mathematics and ties it to the reference papers.
+* The core of the implementation is in the [freewater.py](./pymods/freewater.py) file and the interface class in [freewater\_runner.py](./pymods/freewater_runner.py).
 
 ## Caveats
 * **This software is untested. Please do your own testing before using it.**
