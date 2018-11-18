@@ -4,8 +4,10 @@ This is a Python implementation of a Single Shell Free Water Elimination Model
 that follows the papers listed in the references section below. **This software
 is written for educational purposes only.**  
 
-![Free water corrected FA](./fw_fa.png)
-*Free Water corrected Fractional Anisotropy*
+
+| ![Free water corrected FA](./fw_fa.png) |
+|:--:| 
+| *Free Water corrected Fractional Anisotropy* |
 
 ## Software requirements
 
