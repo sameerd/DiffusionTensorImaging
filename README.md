@@ -1,10 +1,10 @@
 # Single Shell Free Water Elimination Diffusion Tensor Model 
 
 This is a Python implementation of a Single Shell Free Water Elimination Model
-for analysis of Diffusion Tensor MRI Images. It implements the methods in the
-references below to solve an optimization problem over a Riemannian Manifold
-via gradient descent. **This software is written for educational purposes
-only**.
+for the analysis of Diffusion Tensor MRI Images. It implements the methods in
+the references below to solve an optimization problem over a Riemannian
+Manifold via gradient descent. **This software is written for educational
+purposes only**.
 
 
 | ![Free water corrected FA](./fw_fa.png) |
@@ -13,22 +13,23 @@ only**.
 
 ## Software requirements
 
-This code was developed with the following versions. It might also work on slightly older versions of `Python`.
+This code was developed with the following packages. It might also work on
+slightly older versions of `Python`.
 
 * Python 3.6.3
 * [Dipy 0.14.0](http://nipy.org/dipy/index.html)
 
 ## Getting Started
 
-* Download via git. `git checkout https://github.com/sameerd/DiffusionTensorImaging.git`
+* Download with git. `git checkout https://github.com/sameerd/DiffusionTensorImaging.git`
 * Follow one of the two examples
-  * [example.py](example.py) : how to use this code in a script or pipeline with your own data.
-  * [Example.ipynb](notebooks/Example.ipynb) Jupyter Notebook has an interactive overview of how to use this repository with publicly available data
+  * [example.py](example.py) : python script that can be used in a pipeline with local data.
+  * [Example.ipynb](notebooks/Example.ipynb) : Jupyter Notebook with an interactive overview of how to use this repository with publicly available data
 * Check that the first panel (marked `loss` below) converges
 
 ![Loss function](./loss_function.png)
 
-If the model isn't converging you can try reducing the time step `dt` or
+If the model isn't converging, you can try reducing the time step `dt` or
 increase the number of iterations. Once you are sure about convergence, you can
 use the the code's convenience functions to return the `free water map`, the
 free water corrected `mean diffusivity`, and the free water corrected
@@ -52,11 +53,11 @@ features than the version in this repository.
 
 ## Memory Usage
 
-On a recent test a smallish volume of size 100x100x10 with approx 200 gradient
-directions consumes around 3GB of memory and takes approximately 30 minutes to
-run. A more realistically sized volume will take longer and consume more
-memory. Try to make sure that there is enough memory to prevent swapping to
-disk. 
+On a recent test, a smallish volume of size 100x100x10 with approximately 200
+gradient directions consumes around 3GB of memory and takes approximately 30
+minutes to run on a reasonably modern computer. A more realistically sized
+larger volume will take longer and consume more memory. Try to make sure that there is
+enough memory to prevent swapping to disk. 
 
 
 ## References
