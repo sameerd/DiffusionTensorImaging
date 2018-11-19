@@ -3,7 +3,7 @@
 This is a Python implementation of a Single Shell Free Water Elimination Model
 for the analysis of Diffusion Tensor MRI Images. It implements the methods in
 the references below to solve an optimization problem over a Riemannian
-Manifold via gradient descent. **This software is written for educational
+manifold via gradient descent. **This software is written for educational
 purposes only**.
 
 
@@ -53,9 +53,9 @@ features than the version in this repository.
 
 ## Memory Usage
 
-On a recent test, a smallish volume of size 100x100x10 with approximately 200
-gradient directions consumes around 3GB of memory and takes approximately 30
-minutes to run on a reasonably modern computer. A more realistically sized
+On a recent test, a volume of size 100x100x10 with approximately 200 gradient
+directions consumed around 3GB of memory and took approximately 30 minutes to
+run using a 2GHz AMD opteron 6100 Series processor. A more realistically sized
 larger volume will take longer to run and consume more memory. Try to make sure
 that there is enough memory to prevent swapping to disk. 
 
