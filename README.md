@@ -56,8 +56,8 @@ features than the version in this repository.
 On a recent test, a smallish volume of size 100x100x10 with approximately 200
 gradient directions consumes around 3GB of memory and takes approximately 30
 minutes to run on a reasonably modern computer. A more realistically sized
-larger volume will take longer and consume more memory. Try to make sure that there is
-enough memory to prevent swapping to disk. 
+larger volume will take longer to run and consume more memory. Try to make sure
+that there is enough memory to prevent swapping to disk. 
 
 
 ## References
