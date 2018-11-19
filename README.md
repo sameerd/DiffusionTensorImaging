@@ -1,20 +1,23 @@
 # Single Shell Free Water Elimination Diffusion Tensor Model 
 
-This is a Python implementation of a Single Shell Free Water Elimination Model
-for the analysis of Diffusion Tensor MRI Images. It implements the methods in
-the references below to solve an optimization problem over a Riemannian
-manifold via gradient descent. **This software is written for educational
-purposes only**.
+This is a Python implementation of a Free Water Elimination Model for the
+analysis of Single Shell Diffusion Tensor MRI Images. We would like to
+[separate out the signal decay of extracellular free water from  water that is
+in the vicinity of cellular
+tissue](http://pnl.bwh.harvard.edu/portfolio-item/free-water/). This is an
+ill-posed problem because there are infinitely many solutions. So constraints
+are imposed via the time evolution of a gradient flow on a Riemannian manifold
+to get a unique solution. The resulting optimization problem is solved via
+gradient descent.  **This software is written for educational purposes only**.
 
 
 | ![Free water corrected FA](./fw_fa.png) |
 |:---:| 
-| *Free Water corrected Fractional Anisotropy* |
+| *Fig 1. Free Water corrected Fractional Anisotropy* |
 
 ## Software requirements
 
-This code was developed with the following packages. It might also work on
-slightly older versions of `Python`.
+This code was developed with the following packages.
 
 * Python 3.6.3
 * [Dipy 0.14.0](http://nipy.org/dipy/index.html)
@@ -27,13 +30,16 @@ slightly older versions of `Python`.
   * [Example.ipynb](notebooks/Example.ipynb) : Jupyter Notebook with an interactive overview of how to use this repository with publicly available data
 * Check that the first panel (marked `loss` below) converges
 
-![Loss function](./loss_function.png)
+| ![Loss function](./loss_function.png) |
+|:---:| 
+| *Fig 2. Loss function panels* |
+
 
 If the model isn't converging, you can try reducing the time step `dt` or
 increase the number of iterations. Once you are sure about convergence, you can
-use the the code's convenience functions to return the `free water map`, the
-free water corrected `mean diffusivity`, and the free water corrected
-`Fractional Anisotropy` (visualized above).  
+use the code's convenience functions to return the `free water map`, the free
+water corrected `mean diffusivity`, and the free water corrected `Fractional
+Anisotropy` (see Fig 1. above).
 
 ## Documentation
 
@@ -57,7 +63,7 @@ On a recent test, a volume of size 100x100x10 with approximately 200 gradient
 directions consumed around 3GB of memory and took approximately 30 minutes to
 run using a 2GHz AMD opteron 6100 Series processor. A more realistically sized
 larger volume will take longer to run and consume more memory. Try to make sure
-that there is enough memory to prevent swapping to disk. 
+that there is enough memory to prevent swapping to disk.
 
 
 ## References
