@@ -1,9 +1,10 @@
 # Single Shell Free Water Elimination Diffusion Tensor Model 
 
 This is a Python implementation of a Single Shell Free Water Elimination Model
-for analysis of Diffusion Tensor MRI Images. It solves an optimization problem
-over a Riemannian Manifold via gradient descent by following the references
-below. **This software is written for educational purposes only**.
+for analysis of Diffusion Tensor MRI Images. It implements the methods in the
+references below to solve an optimization problem over a Riemannian Manifold
+via gradient descent. **This software is written for educational purposes
+only**.
 
 
 | ![Free water corrected FA](./fw_fa.png) |
@@ -19,7 +20,7 @@ This code was developed with the following versions. It might also work on sligh
 
 ## Getting Started
 
-* `git checkout` this repository
+* Download via git. `git checkout https://github.com/sameerd/DiffusionTensorImaging.git`
 * Follow one of the two examples
   * [example.py](example.py) : how to use this code in a script or pipeline with your own data.
   * [Example.ipynb](notebooks/Example.ipynb) Jupyter Notebook has an interactive overview of how to use this repository with publicly available data
