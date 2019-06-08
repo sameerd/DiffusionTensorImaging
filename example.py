@@ -50,7 +50,7 @@ cropped_volume = crop(img_data, mins, maxs)
 data = applymask(cropped_volume, mask_boolean )
 
 fw_runner = FreewaterRunner(data, gtab) 
-fw_runner.LOG = True # turn off logging for this example
+fw_runner.LOG = True # turn on logging for this example
 fw_runner.run_model(num_iter=100, dt=0.001)
 
 # save the loss function to the working directory
